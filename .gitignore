@@ -1,0 +1,12 @@
+# Local development/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
+*.tmp
+*.swp
+*.swo
+.env
+.env.*
+node_modules/

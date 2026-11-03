@@ -1,0 +1,92 @@
+/* Nelx Studio product flyout menu. Kept separate from the Hub dashboard CSS. */
+#adminmenu #toplevel_page_nelx-studio > .wp-submenu,
+#adminmenu #toplevel_page_nelx-studio > .wp-submenu-wrap {
+	overflow: visible;
+}
+
+#adminmenu #toplevel_page_nelx-studio .nelx-hub-menu-has-children {
+	position: relative;
+}
+
+#adminmenu #toplevel_page_nelx-studio .nelx-hub-menu-has-children > a {
+	position: relative;
+	padding-right: 30px;
+}
+
+#adminmenu #toplevel_page_nelx-studio .nelx-hub-menu-arrow {
+	position: absolute;
+	right: 12px;
+	top: 50%;
+	width: 7px;
+	height: 7px;
+	margin-top: -4px;
+	border-top: 1.5px solid currentColor;
+	border-right: 1.5px solid currentColor;
+	transform: rotate(45deg);
+	opacity: .78;
+	pointer-events: none;
+}
+
+#adminmenu #toplevel_page_nelx-studio .nelx-hub-third-level {
+	display: none;
+	position: absolute;
+	left: 100%;
+	top: -8px;
+	z-index: 100001;
+	min-width: 190px;
+	margin: 0;
+	padding: 8px 0;
+	list-style: none;
+	background: #1d2327;
+	border-radius: 3px;
+	box-shadow: 0 5px 20px rgba(0, 0, 0, .28);
+}
+
+#adminmenu #toplevel_page_nelx-studio .nelx-hub-menu-has-children:hover > .nelx-hub-third-level,
+#adminmenu #toplevel_page_nelx-studio .nelx-hub-menu-has-children:focus-within > .nelx-hub-third-level {
+	display: block;
+}
+
+#adminmenu #toplevel_page_nelx-studio .nelx-hub-third-level::before {
+	content: "";
+	position: absolute;
+	left: -8px;
+	top: 0;
+	width: 8px;
+	height: 100%;
+}
+
+#adminmenu #toplevel_page_nelx-studio .nelx-hub-third-level li {
+	margin: 0;
+	padding: 0;
+}
+
+#adminmenu #toplevel_page_nelx-studio .nelx-hub-third-level a {
+	display: block;
+	box-sizing: border-box;
+	min-height: 32px;
+	padding: 7px 16px;
+	color: #c3c4c7;
+	font-size: 13px;
+	line-height: 18px;
+	white-space: nowrap;
+	text-decoration: none;
+}
+
+#adminmenu #toplevel_page_nelx-studio .nelx-hub-third-level a:hover,
+#adminmenu #toplevel_page_nelx-studio .nelx-hub-third-level a:focus,
+#adminmenu #toplevel_page_nelx-studio .nelx-hub-third-level li.current > a {
+	color: #72aee6;
+	background: rgba(255, 255, 255, .045);
+}
+
+#adminmenu #toplevel_page_nelx-studio .nelx-hub-menu-has-children.current > a,
+#adminmenu #toplevel_page_nelx-studio .nelx-hub-menu-has-children.nelx-hub-child-current > a {
+	font-weight: 600;
+}
+
+/* Keep the flyout usable when the WordPress menu is folded/collapsed. */
+.folded #adminmenu #toplevel_page_nelx-studio .nelx-hub-third-level,
+.auto-fold #adminmenu #toplevel_page_nelx-studio .nelx-hub-third-level {
+	min-width: 190px;
+}
