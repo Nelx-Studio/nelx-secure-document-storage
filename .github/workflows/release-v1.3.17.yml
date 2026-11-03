@@ -1,0 +1,76 @@
+name: Publish Nelx Secure Document Storage v1.3.17
+
+on:
+  push:
+    paths:
+      - .github/workflows/release-v1.3.17.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    if: github.repository == 'Nelx-Studio/nelx-secure-document-storage'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the verified v1.3.17 source commit
+        uses: actions/checkout@v4
+        with:
+          ref: 054afaf85071764ae6009d3dbd682566a5574784
+
+      - name: Build WordPress-installable ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          stage="$RUNNER_TEMP/nelx-release"
+          mkdir -p "$stage/nelx-secure-document-storage"
+          rsync -a \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.gitignore' \
+            --exclude='README.md' \
+            --exclude='LICENSE' \
+            ./ "$stage/nelx-secure-document-storage/"
+          test -f "$stage/nelx-secure-document-storage/nelx-secure-document-storage.php"
+          test -f "$stage/nelx-secure-document-storage/readme.txt"
+          (
+            cd "$stage"
+            zip -q -r "$GITHUB_WORKSPACE/nelx-secure-document-storage-1.3.17.zip" nelx-secure-document-storage
+          )
+          unzip -t "$GITHUB_WORKSPACE/nelx-secure-document-storage-1.3.17.zip"
+          file_count="$(unzip -Z1 "$GITHUB_WORKSPACE/nelx-secure-document-storage-1.3.17.zip" | grep -vc '/$')"
+          test "$file_count" -eq 38
+
+      - name: Create GitHub Release and upload installable ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view v1.3.17 >/dev/null 2>&1; then
+            echo "Release v1.3.17 already exists; not replacing it."
+            exit 0
+          fi
+          cat > "$RUNNER_TEMP/release-notes.md" <<'NOTES'
+          ## Nelx Secure Document Storage v1.3.17
+
+          First tagged GitHub release of the free Nelx Secure Document Storage WordPress plugin.
+
+          - Secure document management with a WordPress admin file library.
+          - Role-based access and application-scoped authorization.
+          - JetFormBuilder secure uploads, context-aware shortcodes, and JetEngine integration.
+          - Bundled local DataTables assets; no DataTables CDN dependency.
+          - Plugin URL: https://nelxstudio.com/nelx-secure-document-storage/
+
+          **Installation:** Download `nelx-secure-document-storage-1.3.17.zip` from the Assets section and upload it under WordPress → Plugins → Add New Plugin → Upload Plugin.
+
+          The version tag points to the verified v1.3.17 source commit `054afaf`.
+          NOTES
+          gh release create v1.3.17 \
+            "$GITHUB_WORKSPACE/nelx-secure-document-storage-1.3.17.zip" \
+            --target 054afaf85071764ae6009d3dbd682566a5574784 \
+            --title "Nelx Secure Document Storage v1.3.17" \
+            --notes-file "$RUNNER_TEMP/release-notes.md" \
+            --latest
