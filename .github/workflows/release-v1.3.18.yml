@@ -1,0 +1,75 @@
+name: Publish Nelx Secure Document Storage v1.3.18
+
+on:
+  push:
+    paths:
+      - .github/workflows/release-v1.3.18.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    if: github.repository == 'Nelx-Studio/nelx-secure-document-storage'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out tested v1.3.18 source
+        uses: actions/checkout@v4
+        with:
+          ref: 91859393184c15c4c8d3dc5f183190c9372783c2
+
+      - name: Validate and build WordPress plugin ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(grep -c 'Version: 1.3.18' nelx-secure-document-storage.php)" -eq 1
+          test "$(grep -c 'Stable tag: 1.3.18' readme.txt)" -eq 1
+          find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n 1 php -l >/dev/null
+          stage="$RUNNER_TEMP/nelx-release"
+          mkdir -p "$stage/nelx-secure-document-storage"
+          rsync -a \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.gitignore' \
+            --exclude='README.md' \
+            --exclude='LICENSE' \
+            ./ "$stage/nelx-secure-document-storage/"
+          test -f "$stage/nelx-secure-document-storage/nelx-secure-document-storage.php"
+          (
+            cd "$stage"
+            zip -q -r "$GITHUB_WORKSPACE/nelx-secure-document-storage-1.3.18.zip" nelx-secure-document-storage
+          )
+          unzip -t "$GITHUB_WORKSPACE/nelx-secure-document-storage-1.3.18.zip"
+          test "$(unzip -Z1 "$GITHUB_WORKSPACE/nelx-secure-document-storage-1.3.18.zip" | grep -vc '/$')" -eq 38
+          if unzip -Z1 "$GITHUB_WORKSPACE/nelx-secure-document-storage-1.3.18.zip" | grep -i 'release.notes'; then
+            echo 'Release-notes file must not be bundled'
+            exit 1
+          fi
+
+      - name: Tag and publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view v1.3.18 >/dev/null 2>&1; then
+            echo "Release v1.3.18 already exists. Not replacing it."
+            exit 0
+          fi
+          cat > "$RUNNER_TEMP/release-notes.md" <<'NOTES'
+          ## Nelx Secure Document Storage v1.3.18
+
+          **Fix:** The secure Files table now initializes on the first visit through the plugin settings route (`page=nelx-secure-document-storage`), just as it does from the Files tab (`page=nelx-secure-files`).
+
+          This patch loads the bundled DataTables 2.3.4 assets on both entry routes. The existing AJAX file listing, permissions, uploads, pagination, other settings screens, and integrations remain unchanged.
+
+          **Install:** Download `nelx-secure-document-storage-1.3.18.zip` below and upload it in WordPress → Plugins → Add New Plugin → Upload Plugin.
+          NOTES
+          gh release create v1.3.18 \
+            "$GITHUB_WORKSPACE/nelx-secure-document-storage-1.3.18.zip" \
+            --target 91859393184c15c4c8d3dc5f183190c9372783c2 \
+            --title "Nelx Secure Document Storage v1.3.18" \
+            --notes-file "$RUNNER_TEMP/release-notes.md" \
+            --latest
