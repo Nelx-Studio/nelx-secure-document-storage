@@ -194,10 +194,13 @@ class NELXSDST_Settings {
         }
         $style_dependencies = [];
         $dependencies = [ 'jquery', 'nelxsdst-select2' ];
-        $is_files_page = false !== strpos( $hook, 'nelx-secure-files' )
-            && false === strpos( $hook, 'nelx-secure-files-access' )
-            && false === strpos( $hook, 'nelx-secure-files-integrations' )
-            && false === strpos( $hook, 'nelx-secure-files-donate' );
+        // The Hub's default plugin route and the Files tab render the same
+        // file table. Load the bundled DataTables assets on both routes.
+        $is_files_page = false !== strpos( $hook, 'nelx-secure-document-storage' )
+            || ( false !== strpos( $hook, 'nelx-secure-files' )
+                && false === strpos( $hook, 'nelx-secure-files-access' )
+                && false === strpos( $hook, 'nelx-secure-files-integrations' )
+                && false === strpos( $hook, 'nelx-secure-files-donate' ) );
         if ( $is_files_page ) {
             // Load vendor styles first so our admin stylesheet can intentionally override them.
             wp_enqueue_style( 'nelxsdst-datatables', NELXSDST_PLUGIN_URL . 'assets/vendor/datatables/dataTables.css', [], '2.3.4' );

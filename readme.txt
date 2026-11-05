@@ -4,7 +4,7 @@ Tags: security, file protection, secure uploads, documents, jetformbuilder
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.3.17
+Stable tag: 1.3.18
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -104,6 +104,11 @@ No. Delivery reads local files in 1 MiB chunks. Active web content is downloaded
 DataTables 2.3.4 is bundled locally under assets/vendor/datatables, with readable source and its MIT license. No remote DataTables requests are made by the plugin. The existing bundled Select2 library is retained.
 
 == Changelog ==
+
+= 1.3.18 (November 5, 2026) =
+* Load bundled DataTables assets on both the default plugin settings route and the Files tab so the file list initializes on first visit.
+* Preserve existing file access, filters, upload and AJAX table behavior.
+
 
 = 1.3.17 (November 3, 2026) =
 * Standardize bundled Nelx Studio Hub translation calls to the plugin text domain for WordPress.org Plugin Check compliance.

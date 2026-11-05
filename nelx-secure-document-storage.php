@@ -3,7 +3,7 @@
  * Plugin Name: Nelx Secure Document Storage
  * Plugin URI: https://nelxstudio.com/nelx-secure-document-storage/
  * Description: Secure file storage, native uploads, protected downloads and universal shortcodes, with optional JetFormBuilder, JetEngine and Elementor integrations.
- * Version: 1.3.17
+ * Version: 1.3.18
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: Astariko Ambuka
@@ -19,7 +19,7 @@ if ( ! defined('ABSPATH') ) {
 
 define('NELXSDST_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('NELXSDST_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('NELXSDST_PLUGIN_VERSION', '1.3.17');
+define('NELXSDST_PLUGIN_VERSION', '1.3.18');
 
 if ( ! defined('NELXSDST_SECURE_DIR_NAME') ) {
 	define('NELXSDST_SECURE_DIR_NAME', 'nelx-secure-storage');
